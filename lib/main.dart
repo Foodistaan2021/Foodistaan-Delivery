@@ -1,26 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:foodistaan_delivery/login/login.dart';
 import 'home/home.dart';
 import 'orders/orders.dart';
 import 'profile/profile.dart';
 import 'chat/chat.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Foodistaan Delivery',
-      theme: ThemeData(
-        primaryColor: const Color.fromRGBO(247, 193, 43, 1),
-      ),
-      home: const Bottom(),
-    );
-  }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
+    title: 'Foodistaan Delivery',
+    theme: ThemeData(
+      primaryColor: const Color.fromRGBO(247, 193, 43, 1),
+    ),
+    initialRoute: FirebaseAuth.instance.currentUser != null ? 'H' : 'L',
+    routes: {
+      'L': (context) => LoginScreen(),
+      'H': (context) => Bottom(),
+    },
+  ));
 }
 
 class Bottom extends StatefulWidget {
@@ -31,7 +31,6 @@ class Bottom extends StatefulWidget {
 }
 
 class _BottomState extends State<Bottom> {
-
   final List<Widget> pages = const [
     Home(),
     Orders(),
@@ -39,7 +38,7 @@ class _BottomState extends State<Bottom> {
     Chat(),
   ];
 
-  var pageindex = 0 ;
+  var pageindex = 0;
 
   void showpage(int index) {
     setState(() {
@@ -52,32 +51,32 @@ class _BottomState extends State<Bottom> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                ),
-                label: 'Home',
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.event_note_outlined,
-                ),
-                label: 'Orders',
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.event_note_outlined,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.account_circle_outlined,
-                ),
-                label: 'Profile',
+              label: 'Orders',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.account_circle_outlined,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.message_outlined,
-                ),
-                label: 'Chat',
+              label: 'Profile',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.message_outlined,
               ),
-            ],
+              label: 'Chat',
+            ),
+          ],
           elevation: 0,
           iconSize: 25,
           onTap: showpage,
